@@ -44,7 +44,7 @@ class Segmentor:
         return masks, scores, logits
         
     @torch.no_grad()
-    def segment_with_click(self, origin_frame, coords, modes, multimask=True):
+    def segment_with_click(self, origin_frame, coords, modes, min_area, multimask=True):
         '''
             
             return: 
@@ -57,14 +57,33 @@ class Segmentor:
             'point_modes': modes,
         }
         masks, scores, logits = self.interactive_predict(prompts, 'point', multimask)
-        mask, logit = masks[np.argmax(scores)], logits[np.argmax(scores), :, :]
+
+        # order scores from highest to lowest
+        order = np.argsort(scores)[::-1]
+        logit = np.zeros_like(logits[0])
+        mask = np.zeros_like(masks[0])
+        for i in order:
+            if np.sum(masks[i]) > min_area:
+                mask = masks[i]
+                logit = logits[i, :, :]
+                break
+        
+        # mask, logit = masks[np.argmax(scores)], logits[np.argmax(scores), :, :]
         prompts = {
             'point_coords': coords,
             'point_modes': modes,
             'mask_prompt': logit[None, :, :]
         }
         masks, scores, logits = self.interactive_predict(prompts, 'point_mask', multimask)
-        mask = masks[np.argmax(scores)]
+        # mask = masks[np.argmax(scores)]
+
+        # order scores from highest to lowest
+        order = np.argsort(scores)[::-1]
+        mask = np.zeros_like(masks[0])
+        for i in order:
+            if np.sum(masks[i]) > min_area:
+                mask = masks[i]
+                break
 
         return mask.astype(np.uint8)
 
