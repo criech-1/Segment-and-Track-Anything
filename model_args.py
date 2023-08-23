@@ -14,8 +14,8 @@ sam_args = {
 }
 aot_args = {
     'phase': 'PRE_YTB_DAV',
-    'model': 'r50_deaotl',
-    'model_path': 'ckpt/R50_DeAOTL_PRE_YTB_DAV.pth',
+    'model': 'deaott',
+    'model_path': './Segment-and-Track-Anything/ckpt/DeAOTT_PRE_YTB_DAV.pth',
     'long_term_mem_gap': 9999,
     'max_len_long_term': 9999,
     'gpu_id': 0,
