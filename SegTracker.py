@@ -32,7 +32,7 @@ class SegTracker():
         # debug
         self.everything_points = []
         self.everything_labels = []
-        print("SegTracker has been initialized")
+        print('\x1b[1;30;42m' + '>> SegTracker has been initialized' + '\x1b[0m')
 
     def seg(self,frame):
         '''
