@@ -77,9 +77,9 @@ class Segmentor:
         masks, scores, logits = self.interactive_predict(prompts, 'point_mask', multimask)
         # mask = masks[np.argmax(scores)]
 
-        # order scores from highest to lowest
+        # order scores from highest to lowest, but take the highest one as default
         order = np.argsort(scores)[::-1]
-        mask = np.zeros_like(masks[0])
+        mask = masks[order[0]]
         for i in order:
             if np.sum(masks[i]) > min_area:
                 mask = masks[i]
