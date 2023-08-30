@@ -5,7 +5,6 @@ from sam.segment_anything import sam_model_registry, SamAutomaticMaskGenerator
 from aot_tracker import get_aot
 import numpy as np
 from tool.segmentor import Segmentor
-from tool.detector import Detector
 from tool.transfer_tools import draw_outline, draw_points
 import cv2
 from seg_track_anything import draw_mask
