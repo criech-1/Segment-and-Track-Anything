@@ -60,13 +60,24 @@ class Segmentor:
 
         # order scores from highest to lowest
         order = np.argsort(scores)[::-1]
-        logit = np.zeros_like(logits[0])
-        mask = np.zeros_like(masks[0])
+        logit = logits[order[0], :, :]
+        mask = masks[order[0]]
+
+        areas = np.zeros(len(order))
+        found = False
         for i in order:
-            if np.sum(masks[i]) > min_area:
+            area = np.sum(masks[i])
+            areas[i] = area
+            if area > min_area:
                 mask = masks[i]
                 logit = logits[i, :, :]
+                found = True
                 break
+
+        if not found:
+            gt_idx = np.argmax(areas)
+            mask = masks[gt_idx]
+            logit = logits[gt_idx, :, :]            
         
         # mask, logit = masks[np.argmax(scores)], logits[np.argmax(scores), :, :]
         prompts = {
@@ -79,11 +90,21 @@ class Segmentor:
 
         # order scores from highest to lowest
         order = np.argsort(scores)[::-1]
-        mask = np.zeros_like(masks[0])
+        mask = masks[order[0]]
+
+        areas = np.zeros(len(order))
+        found = False
         for i in order:
-            if np.sum(masks[i]) > min_area:
+            area = np.sum(masks[i])
+            areas[i] = area
+            if area > min_area:
                 mask = masks[i]
+                found = True
                 break
+
+        if not found:
+            gt_idx = np.argmax(areas)
+            mask = masks[gt_idx]
 
         return mask.astype(np.uint8)
 
